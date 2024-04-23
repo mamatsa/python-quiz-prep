@@ -54,6 +54,7 @@ def assign_policy(aws_s3_client, policy_function, bucket_name):
         print("please provide policy")
         return
 
+    aws_s3_client.delete_public_access_block(Bucket=bucket_name)
     aws_s3_client.put_bucket_policy(Bucket=bucket_name, Policy=policy)
 
     print(response)
