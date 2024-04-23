@@ -17,6 +17,9 @@ parser.add_argument(
 parser.add_argument(
     "-cb", "--create_bucket", action="store_true", help="Create a bucket"
 )
+parser.add_argument(
+    "-lo", "--list_objects", action="store_true", help="List objects in a bucket"
+)
 
 
 def init_client():
@@ -72,6 +75,11 @@ def create_bucket(aws_s3_client, bucket_name, region="us-east-2") -> bool:
     return False
 
 
+def get_objects(aws_s3_client, bucket_name) -> str:
+    for key in aws_s3_client.list_objects(Bucket=bucket_name)["Contents"]:
+        print(f" {key['Key']}, size: {key['Size']}")
+
+
 if __name__ == "__main__":
     # Parse the arguments
     args = parser.parse_args()
@@ -93,3 +101,7 @@ if __name__ == "__main__":
     # Delete bucket
     if args.delete_bucket:
         print(f"Bucket deleted: {delete_bucket(s3_client, args.bucket)}")
+
+    # List objects
+    if args.list_objects:
+        get_objects(s3_client, args.bucket)
