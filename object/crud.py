@@ -175,3 +175,23 @@ def delete_object(aws_s3_client, bucket_name, filename):
         print(
             f"The object with key '{filename}' does not exist in bucket '{bucket_name}'."
         )
+
+
+def upload_file(aws_s3_client, filename, bucket_name):
+    response = aws_s3_client.upload_file(filename, bucket_name, "hello.txt")
+    # status_code = response["ResponseMetadata"]["HTTPStatusCode"]
+    # if status_code == 200:
+    #   return True
+    # return False
+
+
+def upload_file_obj(aws_s3_client, filename, bucket_name):
+    with open(filename, "rb") as file:
+        aws_s3_client.upload_fileobj(file, bucket_name, "hello_obj.txt")
+
+
+def upload_file_put(aws_s3_client, filename, bucket_name):
+    with open(filename, "rb") as file:
+        aws_s3_client.put_object(
+            Bucket=bucket_name, Key="hello_put.txt", Body=file.read()
+        )
