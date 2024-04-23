@@ -14,6 +14,9 @@ parser.add_argument("-lb", "--list_buckets", action="store_true", help="List buc
 parser.add_argument(
     "-db", "--delete_bucket", action="store_true", help="Delete a bucket"
 )
+parser.add_argument(
+    "-cb", "--create_bucket", action="store_true", help="Create a bucket"
+)
 
 
 def init_client():
@@ -57,6 +60,18 @@ def delete_bucket(aws_s3_client, bucket_name):
     return True
 
 
+def create_bucket(aws_s3_client, bucket_name, region="us-east-2") -> bool:
+    location = {"LocationConstraint": region}
+    # https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3/client/create_bucket.html
+    response = aws_s3_client.create_bucket(
+        Bucket=bucket_name, CreateBucketConfiguration=location
+    )
+    status_code = response["ResponseMetadata"]["HTTPStatusCode"]
+    if status_code == 200:
+        return True
+    return False
+
+
 if __name__ == "__main__":
     # Parse the arguments
     args = parser.parse_args()
@@ -70,6 +85,10 @@ if __name__ == "__main__":
     # Check bucket existence
     if args.bucket_exists:
         print(f"Bucket exists: {bucket_exists(s3_client, args.bucket)}")
+
+    # Create bucket
+    if args.create_bucket:
+        print(f"Bucket created: {create_bucket(s3_client, args.bucket)}")
 
     # Delete bucket
     if args.delete_bucket:
